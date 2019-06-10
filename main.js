@@ -1,38 +1,43 @@
+let slides=[];
+
 $(document).ready(function () {
   let movieId = getUrlParameter('movieId');
   let actorId = getUrlParameter('actorId');
   let searchResults = getUrlParameter('search');
 
   if (movieId !== '') {
-    GetMovieDetails(`https://api.themoviedb.org/3/movie/${movieId}?api_key=08f123202c02b3f6e43980f02514a11d&language=en-US`, '#movie-details')
+    GetMovieDetails(`https://api.themoviedb.org/3/movie/${movieId}?api_key=08f123202c02b3f6e43980f02514a11d&language=en-US`, '.movie-details')
 
   } else if (actorId !== '') {
-    GetActorDetails(`https://api.themoviedb.org/3/person/${actorId}?api_key=08f123202c02b3f6e43980f02514a11d&language=en-US`, '#actor-details')
+    GetActorDetails(`https://api.themoviedb.org/3/person/${actorId}?api_key=08f123202c02b3f6e43980f02514a11d&language=en-US`, '.actor-details')
 
 
   } else if(searchResults !== ''){
-    GetData(`https://api.themoviedb.org/3/search/multi?query=${searchResults}&api_key=08f123202c02b3f6e43980f02514a11d`, '#search-results', 0, false );
+    GetData(`https://api.themoviedb.org/3/search/multi?query=${searchResults}&api_key=08f123202c02b3f6e43980f02514a11d`, '.search-results', 0, false );
   
   } else {
-    GetData('https://api.themoviedb.org/3/movie/upcoming?api_key=08f123202c02b3f6e43980f02514a11d&page=1', '#upcoming', 0, true, '#upcoming-actors');
-    GetData('https://api.themoviedb.org/3/movie/top_rated?api_key=08f123202c02b3f6e43980f02514a11d&page=1', '#top-rated', 10, false)
+    GetData('https://api.themoviedb.org/3/movie/upcoming?api_key=08f123202c02b3f6e43980f02514a11d&page=1', '.upcoming', 0, true, '.upcoming-actors');
+    GetData('https://api.themoviedb.org/3/movie/top_rated?api_key=08f123202c02b3f6e43980f02514a11d&page=1', '.top-rated', 10, false)
 
   }
-
-
   
 })
 
 
 $("#searchBtn").click(function (e) {
-  console.log("Switching Pages... ");
+
   let mySearch = document.getElementById('search');
   e.preventDefault()
   
-  window.location.href = `C:/Users/ribac/Documents/projects/movie-db/search-results.html?search=${mySearch.value}`;
+  window.location.href = `search-results.html?search=${mySearch.value}`;
 
 })
 
+$("#goBackBtn").click(function (e) {
+  e.preventDefault();
+  window.location.href = `index.html`;
+
+})
 
 // Api Url | Div Id in HTML | How many records you want | Whether or not you want to get actors
 function GetData(url, containerId, limit, getActors, actorContId) {
@@ -46,7 +51,6 @@ function GetData(url, containerId, limit, getActors, actorContId) {
   }
 
   $.ajax(settings).done(function (response) {
-    // console.log(response)
 
     if (dataType = 'movies') {
       CreatePosters(response.results, containerId, limit);
@@ -90,15 +94,18 @@ function GetActorDetails(url, containerId) {
 }
 
 function CreatePosters(results, containerId, limit) {
+  slides = [];
   for (let i = 0; i < (limit !== 0 ? limit : results.length); i++) {
     let imgUrl = results[i].poster_path;
+    slides.push(`"https://image.tmdb.org/t/p/w500/${imgUrl}"`);
 
     let poster = document.createElement('div');
-    poster.innerHTML = `<a href="file:///C:/Users/ribac/Documents/projects/movie-db/movie-details.html?movieId=${results[i].id}"><img class="poster" src="https://image.tmdb.org/t/p/w500/${imgUrl}"/></a>`;
+    poster.innerHTML = `<a href="movie-details.html?movieId=${results[i].id}"><img class="poster" src="https://image.tmdb.org/t/p/w500/${imgUrl}"/></a>`;
     $(poster).addClass('poster');
 
     $(containerId).append(poster);
   }
+  console.log (slides);
 }
 
 function GetActors(results, containerId) {
@@ -115,7 +122,6 @@ function GetActors(results, containerId) {
     }
 
     $.ajax(settings).done(function (response) {
-      // console.log(response)
       ShowActors(response.cast, containerId);
     });
 
@@ -127,7 +133,7 @@ function ShowActors(results, containerId) {
     let imgUrl = results[i].profile_path;
 
     let poster = document.createElement('div');
-    poster.innerHTML = `<a href="file:///C:/Users/ribac/Documents/projects/movie-db/actor-details.html?actorId=${results[i].id}"><img class="actorImg" src="https://image.tmdb.org/t/p/w500/${imgUrl}"/></a>`;
+    poster.innerHTML = `<a href="actor-details.html?actorId=${results[i].id}"><img class="actorImg" src="https://image.tmdb.org/t/p/w500/${imgUrl}"/></a>`;
     $(poster).addClass('actorImg');
 
     $(containerId).append(poster);
@@ -163,7 +169,7 @@ function ShowMovieDetails(results, containerId) {
 }
 
 function ShowActorDetails(results, containerId) {
-  console.log("Movie Details Page", results, containerId)
+  console.log("Actor Details Page", results, containerId)
 
   let poster = document.createElement('div');
   poster.innerHTML = `<div style="margin:0px auto;  max-width:800px; height: 500px; width:100%; background-repeat:no-repeat; background-size:contain; background-image: url('https://image.tmdb.org/t/p/w500/${(results.profile_path)}')"></div>  

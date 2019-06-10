@@ -34,16 +34,16 @@ body{
 }
 /* Section styles */
 
-#upcoming{
+.upcoming{
     width:90vw;
     margin:0px auto;
     display:flex;
-    /* flex-wrap:wrap; */
+  
     overflow-x:scroll;
     text-align:center;
-}
+} 
 
-#search-results{
+.search-results{
     width:90vw;
     margin:0px auto;
     display:flex;
@@ -51,7 +51,7 @@ body{
     text-align:center;
 }
 
-#upcoming-actors{
+.upcoming-actors{
     width:90vw;
     margin:0px auto;
     display:flex;
@@ -60,7 +60,7 @@ body{
     text-align:center;
 }
 
-#top-rated{
+.top-rated{
     width:90vw;
     margin:0px auto;
     display:flex;
