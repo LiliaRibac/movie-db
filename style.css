@@ -1,6 +1,10 @@
 body{
-    background-color: lightcyan;
+    background-color: #F6E4F9;
     text-align:center;
+}
+.navbar{
+    color:#8F5BE6;
+    
 }
 
 .app-container{
@@ -12,6 +16,9 @@ body{
     color:#333;
     font-size:40px;
     font-weight:bold;
+}
+.btn{
+margin:13px;
 }
 
 .primary-btn{
