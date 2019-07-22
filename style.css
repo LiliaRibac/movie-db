@@ -39,17 +39,24 @@ margin:13px;
     border:solid 1px #333;
     text-decoration:none;
 }
-/* Section styles */
 
-.upcoming{
+.slick-initialized{
+    width: 2000px;
+    height: 530px;
+}
+
+.slick-slide{
+    margin-left: 100px;
+}
+
+.your-class{
     width:90vw;
     margin:0px auto;
     display:flex;
   
-    overflow-x:scroll;
+    /* overflow-x:scroll; */
     text-align:center;
-} 
-
+}
 .search-results{
     width:90vw;
     margin:0px auto;

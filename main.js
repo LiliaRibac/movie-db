@@ -1,4 +1,4 @@
-let slides=[];
+let slides = [];
 
 $(document).ready(function () {
   let movieId = getUrlParameter('movieId');
@@ -12,23 +12,22 @@ $(document).ready(function () {
     GetActorDetails(`https://api.themoviedb.org/3/person/${actorId}?api_key=08f123202c02b3f6e43980f02514a11d&language=en-US`, '.actor-details')
 
 
-  } else if(searchResults !== ''){
-    GetData(`https://api.themoviedb.org/3/search/multi?query=${searchResults}&api_key=08f123202c02b3f6e43980f02514a11d`, '.search-results', 0, false );
-  
+  } else if (searchResults !== '') {
+    GetData(`https://api.themoviedb.org/3/search/multi?query=${searchResults}&api_key=08f123202c02b3f6e43980f02514a11d`, '.search-results', 0, false, null, 'movies');
+
   } else {
-    GetData('https://api.themoviedb.org/3/movie/upcoming?api_key=08f123202c02b3f6e43980f02514a11d&page=1', '.upcoming', 0, true, '.upcoming-actors');
-    GetData('https://api.themoviedb.org/3/movie/top_rated?api_key=08f123202c02b3f6e43980f02514a11d&page=1', '.top-rated', 10, false)
+    GetData('https://api.themoviedb.org/3/movie/upcoming?api_key=08f123202c02b3f6e43980f02514a11d&page=1', '#upcoming-movies-slider', 0, true, '.upcoming-actors', 'slider');
+    GetData('https://api.themoviedb.org/3/movie/top_rated?api_key=08f123202c02b3f6e43980f02514a11d&page=1', '.top-rated', 10, false, null, 'movies');
 
   }
-  
-})
 
+})
 
 $("#searchBtn").click(function (e) {
 
   let mySearch = document.getElementById('search');
   e.preventDefault()
-  
+
   window.location.href = `search-results.html?search=${mySearch.value}`;
 
 })
@@ -40,7 +39,7 @@ $("#goBackBtn").click(function (e) {
 })
 
 // Api Url | Div Id in HTML | How many records you want | Whether or not you want to get actors
-function GetData(url, containerId, limit, getActors, actorContId) {
+function GetData(url, containerId, limit, getActors, actorContId, dataType) {
   var settings = {
     "async": true,
     "crossDomain": true,
@@ -52,9 +51,15 @@ function GetData(url, containerId, limit, getActors, actorContId) {
 
   $.ajax(settings).done(function (response) {
 
-    if (dataType = 'movies') {
+
+    if (dataType === 'movies') {
+      console.log(dataType)
       CreatePosters(response.results, containerId, limit);
 
+    }
+
+    if (dataType === 'slider') {
+      CreateSlider(response.results, containerId, limit);
     }
 
     if (getActors = true) {
@@ -105,7 +110,28 @@ function CreatePosters(results, containerId, limit) {
 
     $(containerId).append(poster);
   }
-  console.log (slides);
+  console.log(slides);
+}
+
+
+function CreateSlider(results, containerId, limit) {
+  let slideCounter = 0;
+
+  for (let i = 0; i < (limit !== 0 ? limit : results.length); i++) {
+    let imgUrl = results[i].backdrop_path;
+    slideCounter++;
+    let poster = document.createElement('div');
+    poster.innerHTML = `<img src="https://image.tmdb.org/t/p/w500/${imgUrl}" alt="${results[i].original_title}" width="100%" height="auto"/> <div class="carousel-caption">${results[i].original_title}</div>`;
+
+    if (slideCounter === 1) {
+      poster.setAttribute('class', 'carousel-item active')
+    } else {
+      poster.setAttribute('class', 'carousel-item')
+    }
+
+
+    $(containerId).append(poster);
+  }
 }
 
 function GetActors(results, containerId) {
@@ -151,7 +177,7 @@ function ShowMovieDetails(results, containerId) {
   console.log("Movie Details Page", results, containerId)
 
   let poster = document.createElement('div');
-  poster.innerHTML = `<div style="margin:0px auto;  max-width:800px; height: 500px; width:100%; background-repeat:no-repeat; background-size:cover; background-image: url('https://image.tmdb.org/t/p/w500/${(results.backdrop_path !== undefined ? results.backdrop_path : results.poster_path)}')"></div>  
+  poster.innerHTML = `<div style="margin:0px auto;  max-width:800px; height: 500px; width:100%; background-repeat:no-repeat;  background-size:cover; background-image: url('https://image.tmdb.org/t/p/w500/${(results.backdrop_path !== undefined ? results.backdrop_path : results.poster_path)}')"></div>  
   <div style="text-align:left; padding: 30px; margin:0px auto; background-color:white; max-width:800px;"><div style="">
     <h1 class="primary-header">${results.original_title}</h1>
     <p style=" text-align:left;">${results.overview}</p>
@@ -189,4 +215,3 @@ function ShowActorDetails(results, containerId) {
   $(poster).addClass('poster');
   $(containerId).append(poster);
 }
-
